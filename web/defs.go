@@ -1,9 +1,9 @@
 package main
 
 type ApiBody struct {
-	Url     string `json:"url"  binding:"required"`
-	Method  string `json:"method"  binding:"required"`
-	ReqBody string `json:"req_body"  binding:"required"`
+	Url     string `json:"url"`
+	Method  string `json:"method"`
+	ReqBody string `json:"req_body"`
 }
 
 type Err struct {

@@ -18,7 +18,7 @@ func sendErrorResponse(c *gin.Context, r *defs.ErrResponse) {
 func CreateUser(c *gin.Context) {
 	//读取消息体获取用户名和密码，并判断是否合法
 	user := defs.User{}
-	if err := c.ShouldBind(&user); err == nil && user.LoginName != "" && user.Pwd != "" {
+	if err := c.BindJSON(&user); err == nil && user.LoginName != "" && user.Pwd != "" {
 		log.Printf("user info:%#v\n", user)
 	} else {
 		log.Println(err.Error())
@@ -41,7 +41,7 @@ func CreateUser(c *gin.Context) {
 func Login(c *gin.Context) {
 	//得到消息体
 	user := defs.User{}
-	if err := c.ShouldBind(&user); err == nil && len(user.LoginName) != 0 && len(user.Pwd) != 0 {
+	if err := c.BindJSON(&user); err == nil && len(user.LoginName) != 0 && len(user.Pwd) != 0 {
 		log.Printf("user info:%#v\n", user)
 	} else {
 		log.Println(err.Error())
@@ -50,24 +50,19 @@ func Login(c *gin.Context) {
 	}
 	//验证姓名是否相同
 	uname := c.Param("username")
-	log.Printf("Login url name: %s", uname)
-	log.Printf("Login body name: %s", user.LoginName)
 	if uname != user.LoginName {
 		sendErrorResponse(c, &defs.ErrorNotAuthUser)
 		return
 	}
 	//验证密码是否相同
 	dbuser, err := dbops.GetUser(user.LoginName)
-	log.Printf("Login pwd: %s", dbuser.Pwd)
-	log.Printf("Login body pwd: %s", user.Pwd)
 	if err != nil || len(dbuser.Pwd) == 0 || dbuser.Pwd != user.Pwd {
 		sendErrorResponse(c, &defs.ErrorNotAuthUser)
 		return
 	}
 	//添加session
-	id := session.GenerateNewSessionId(user.LoginName)
-	si := &defs.SignedIn{Success: true, SessionID: id}
-
+	sid := session.GenerateNewSessionId(user.LoginName)
+	si := &defs.SignedIn{Success: true, SessionID: sid}
 	c.JSON(http.StatusOK, si)
 }
 
@@ -96,7 +91,7 @@ func AddNewVideo(c *gin.Context) {
 
 	//得到消息体
 	nvbody := defs.VideoInfo{}
-	if err := c.ShouldBind(&nvbody); err == nil {
+	if err := c.BindJSON(&nvbody); err == nil {
 		log.Printf("user info:%#v\n", nvbody)
 	} else {
 		log.Println(err.Error())
@@ -138,6 +133,7 @@ func DeleteVideo(c *gin.Context) {
 	}
 
 	vid := c.Param("vid-id")
+	log.Print("DeleteVideo:", vid)
 	//删除数据库中文件
 	err := dbops.DeleteVideoInfo(vid)
 	if err != nil {
@@ -157,8 +153,8 @@ func PostComment(c *gin.Context) {
 	}
 
 	//读消息体
-	cbody := &defs.Comment{}
-	if err := c.ShouldBind(&cbody); err == nil {
+	cbody := &defs.CommentForList{}
+	if err := c.BindJSON(&cbody); err == nil {
 		log.Printf("user info:%#v\n", cbody)
 	} else {
 		log.Println(err.Error())
@@ -190,6 +186,6 @@ func ShowComments(c *gin.Context) {
 	}
 
 	cms := &defs.Comments{Comments: cm}
-
+	log.Print("ShowComments:", cms)
 	c.JSON(http.StatusOK, cms)
 }

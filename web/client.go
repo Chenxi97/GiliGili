@@ -39,7 +39,7 @@ func request(b *ApiBody, w http.ResponseWriter, r *http.Request) {
 		}
 		normalResponse(w, resp)
 	case http.MethodDelete:
-		req, _ := http.NewRequest("Delete", b.Url, nil)
+		req, _ := http.NewRequest("DELETE", b.Url, nil)
 		req.Header = r.Header
 		resp, err = httpClient.Do(req)
 		if err != nil {

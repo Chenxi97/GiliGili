@@ -4,22 +4,22 @@ import "time"
 
 //data models
 type User struct {
-	ID        uint   `gorm:"AUTO_INCREMENT"`
-	LoginName string `gorm:"type:varchar(64);UNIQUE" form:"user_name" json:"user_name" binding:"required"`
-	Pwd       string `gorm:"type:text;not_null" form:"pwd" json:"pwd" binding:"required"`
+	ID        uint   `gorm:"AUTO_INCREMENT" json:"id"`
+	LoginName string `gorm:"type:varchar(64);UNIQUE" form:"user_name" json:"user_name" `
+	Pwd       string `gorm:"type:text;not_null" form:"pwd" json:"pwd" `
 }
 type VideoInfo struct {
-	ID           string     `gorm:"type:varchar(64);not_null" json:"id" binding:"required"`
-	AuthorID     uint       `json:"author_id" binding:"required"`
-	Name         string     `gorm:"type:text" json:"name" binding:"required"`
-	DisplayCtime string     `gorm:"type:text" json:"display_ctime" binding:"required"`
+	ID           string     `gorm:"type:varchar(64);not_null" json:"id" `
+	AuthorID     uint       `json:"author_id" `
+	Name         string     `gorm:"type:text" json:"name" `
+	DisplayCtime string     `gorm:"type:text" json:"display_ctime" `
 	CreateTime   *time.Time `gorm:"default:current_timestamp"`
 }
 type Comment struct {
-	ID       string `gorm:"type:varchar(64);not_null" json:"id" binding:"required"`
-	VideoID  string `gorm:"type:varchar(64)" json:"video_id" binding:"required"`
-	AuthorID uint
-	Content  string     `gorm:"type:text" json:"content" binding:"required"`
+	ID       string     `gorm:"type:varchar(64);not_null" json:"id" `
+	VideoID  string     `gorm:"type:varchar(64)" json:"video_id" `
+	AuthorID uint       `json:"author_id" `
+	Content  string     `gorm:"type:text" json:"content" `
 	Time     *time.Time `gorm:"default:current_timestamp"`
 }
 
@@ -44,7 +44,7 @@ type VideosInfo struct {
 
 type CommentForList struct {
 	Comment
-	AuthorName string `json:"author" binding:"required"`
+	AuthorName string `json:"author" `
 }
 
 type Comments struct {

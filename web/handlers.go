@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -57,19 +58,22 @@ func userHomeHandler(c *gin.Context) {
 
 func proxyHandler(c *gin.Context) {
 	u, _ := url.Parse("http://127.0.0.1:9000/")
+	log.Print(u)
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
 
 func apiHandler(c *gin.Context) {
-	if c.Request.Method != http.MethodPost {
-		c.JSON(http.StatusBadRequest, ErrorRequestNotRecognized)
+	// if c.Request.Method != http.MethodPost {
+	// 	c.JSON(http.StatusBadRequest, ErrorRequestNotRecognized)
+	// 	return
+	// }
+	apibody := &ApiBody{}
+	if err := c.BindJSON(apibody); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, ErrorRequestBodyParseFailed)
 		return
 	}
-
-	apibody := &ApiBody{}
-	if err := c.ShouldBind(apibody); err != nil {
-		c.JSON(http.StatusBadRequest, ErrorRequestBodyParseFailed)
-	}
+	log.Printf("%v\n", apibody)
 	request(apibody, c.Writer, c.Request)
 }

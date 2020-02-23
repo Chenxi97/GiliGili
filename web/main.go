@@ -6,19 +6,20 @@ import (
 )
 
 func main() {
-	router := gin.Default()
-	router.Static("/statics", "./templates")
+	r := gin.Default()
+	r.Static("/statics", "./templates")
 	//**代表文件夹，*代表文件
-	//router.LoadHTMLGlob("../templates/*")
-	router.LoadHTMLFiles("./templates/home.html", "./templates/userhome.html")
+	//r.LoadHTMLGlob("../templates/*")
+	r.LoadHTMLFiles("./templates/home.html", "./templates/userhome.html")
 
-	router.GET("/", homeHandler)
-	router.POST("/", homeHandler)
-	router.GET("/userhome", userHomeHandler)
-	router.POST("/userhome", userHomeHandler)
-	router.POST("/api", apiHandler)
+	r.GET("/", homeHandler)
+	r.POST("/", homeHandler)
+	r.GET("/userhome", userHomeHandler)
+	r.POST("/userhome", userHomeHandler)
+	r.POST("/api", apiHandler)
 	//解决跨域问题
-	router.POST("/upload/:vid-id", proxyHandler)
+	r.POST("/upload/:vid-id", proxyHandler)
+	r.GET("/videos/:vid-id", proxyHandler)
 
-	router.Run(":8080")
+	r.Run(":8080")
 }

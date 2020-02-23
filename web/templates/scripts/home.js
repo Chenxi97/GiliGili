@@ -1,5 +1,4 @@
-$(document).read(function() {
-
+$(document).ready(function() {
 	DEFAULT_COOKIE_EXPIRE_TIME = 30;
 
 	uname = '';
@@ -10,7 +9,6 @@ $(document).read(function() {
 
 	session = getCookie('session');
 	uname = getCookie('username');
-
 	initPage(function() {
 		if (listedVideos !== null) {
 			currentVideo = listedVideos[0];
@@ -98,7 +96,7 @@ $(document).read(function() {
     		$("#siginsubmit").submit();
     	});
 	});
-
+	//两个页面切换
 	$("#signinhref").on('click', function() {
 		$("#regsubmit").hide();
 		$("#siginsubmit").show();
@@ -112,7 +110,6 @@ $(document).read(function() {
 	// userhome event register
 	$("#upload").on('click', function() {
   		$("#uploadvideomodal").show();
-  	
   	});
 
 	
@@ -122,7 +119,6 @@ $(document).read(function() {
 
 	  	createVideo(vname, function(res, err) {
 	  		if (err != null ) {
-	  			//window.alert('encounter an error when try to create video');
 	  			popupErrorMsg('encounter an error when try to create video');
 	  			return;
 	  		}
@@ -183,13 +179,14 @@ $(document).read(function() {
 function initPage(callback) {
 	getUserId(function(res, err) {
 		if (err != null) {
-			window.alert("Encountered error when loading user id");
+			//window.alert("Encountered error when loading user id");
+			popupErrorMsg("Encountered error when loading user id");
 			return;
 		}
 
 		var obj = JSON.parse(res);
 		uid = obj['id'];
-		//window.alert(obj['id']);
+		//popupNotificationMsg("user id: "+obj['id'])
 		listAllVideos(function(res, err) {
 			if (err != null) {
 				//window.alert('encounter an error, pls check your username or pwd');
@@ -354,7 +351,6 @@ function htmlVideoListElement(vid, name, ctime) {
 function registerUser(callback) {
 	var username = $("#username").val();
 	var pwd = $("#pwd").val();
-	var apiUrl = window.location.hostname + ':8080/api';
 
 	if (username == '' || pwd == '') {
 		callback(null, err);
@@ -403,7 +399,6 @@ function registerUser(callback) {
 function signinUser(callback) {
 	var username = $("#susername").val();
 	var pwd = $("#spwd").val();
-	var apiUrl = window.location.hostname + ':8080/api';
 
 	if (username == '' || pwd == '') {
 		callback(null, err);
@@ -424,6 +419,7 @@ function signinUser(callback) {
 		url  : 'http://' + window.location.hostname + ':8080/api',
 		type : 'post',
 		data : JSON.stringify(dat),
+		headers: {'X-Session-Id': session},
 		statusCode: {
 			500: function() {
 				callback(null, "Internal error");

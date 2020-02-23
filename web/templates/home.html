@@ -118,8 +118,30 @@ a {
 </div>
 
 <div class="topic-back" style="padding-left:16px">
-  <h2 id="title">Welcome to MOVIEDASH</h2>
+  <h2 id="title">Welcome to GiliGili</h2>
 </div>
+
+<form method="post" id="siginsubmit" action="/userhome" style="width: 500px; margin: 0 auto; display: none;">
+  <div class="container">
+    <h1>Sign In</h1>
+    <hr>
+
+    <label for="email"><b>User name</b></label>
+    <input id="susername" type="text" placeholder="Enter user name" name="username" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input id="spwd" type="password" placeholder="Enter Password" name="pwd" required>
+
+    <hr>
+    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+
+    <button id="siginbtn" type="submit" class="registerbtn" >Sign In</button>
+  </div>
+  
+  <div class="container signin">
+    <p>Don't have an account? <a id="registerhref" href="#">Register</a>.</p>
+  </div>
+</form>
 
 <form method="post" id="regsubmit" action="/userhome" style="width: 500px; margin: 0 auto;">
   <div class="container">
@@ -143,26 +165,5 @@ a {
   </div>
 </form>
 
-<form method="post" id="siginsubmit" action="/userhome" style="width: 500px; margin: 0 auto; display: none;">
-  <div class="container">
-    <h1>Sign In</h1>
-    <hr>
-
-    <label for="email"><b>User name</b></label>
-    <input id="susername" type="text" placeholder="Enter user name" name="username" required>
-
-    <label for="psw"><b>Password</b></label>
-    <input id="spwd" type="password" placeholder="Enter Password" name="pwd" required>
-
-    <hr>
-    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-
-    <button id="siginbtn" type="submit" class="registerbtn" >Sign In</button>
-  </div>
-  
-  <div class="container signin">
-    <p>Don't have an account? <a id="registerhref" href="#">Register</a>.</p>
-  </div>
-</form>
 </body>
 </html>

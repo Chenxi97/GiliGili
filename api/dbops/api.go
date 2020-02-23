@@ -78,21 +78,28 @@ func AddNewComments(vid string, aid uint, content string) error {
 	return nil
 }
 
+// ListVideoInfo 只显示用户自己的视频
 func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 	res := []*defs.VideoInfo{}
-	rows, err := dbConn.Table("comment").Order("video_info.create_time DESC").
+	// rows, err := dbConn.Table("video_info").Order("video_info.create_time DESC").
+	// 	Select("video_info.id, video_info.author_id, video_info.name, video_info.display_ctime").
+	// 	Joins("inner join user on video_info.author_id = user.id").
+	// 	Where("user.login_name=? AND video_info.create_time > FROM_UNIXTIME(?) AND video_info.create_time<=FROM_UNIXTIME(?) ", uname, from, to).
+	// 	Rows()
+	rows, err := dbConn.Table("video_info").Order("video_info.create_time DESC").
 		Select("video_info.id, video_info.author_id, video_info.name, video_info.display_ctime").
-		Joins("left join user on video_info.author_id = users.id").
-		Where("users.login_name=? AND video_info.create_time > FROM_UNIXTIME(?) AND video_info.create_time<=FROM_UNIXTIME(?) ", uname, from, to).
+		Where("video_info.create_time > FROM_UNIXTIME(?) AND video_info.create_time<=FROM_UNIXTIME(?) ", from, to).
 		Rows()
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		c := &defs.VideoInfo{}
-		if err := rows.Scan(&c); err != nil {
+		var vid, name, time string
+		var aid uint
+		if err := rows.Scan(&vid, &aid, &name, &time); err != nil {
 			return res, err
 		}
+		c := &defs.VideoInfo{ID: vid, AuthorID: aid, Name: name, DisplayCtime: time}
 		res = append(res, c)
 	}
 
@@ -102,7 +109,7 @@ func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 func ListComments(vid string, from, to int) ([]*defs.CommentForList, error) {
 	res := []*defs.CommentForList{}
 	rows, err := dbConn.Table("comment").Order("comment.time DESC").Select("comment.id, user.login_name, comment.content").
-		Joins("left join user on user.id = comment.author_id").
+		Joins("inner join user on user.id = comment.author_id").
 		Where("comment.video_id = ? AND comment.time > FROM_UNIXTIME(?) AND comment.time <= FROM_UNIXTIME(?) ", vid, from, to).
 		Rows()
 	if err != nil {

@@ -12,9 +12,8 @@ import (
 
 func streamHandler(c *gin.Context) {
 	vid := c.Param("vid-id")
-	vl := VIDEO_DIR + vid
 
-	video, err := os.Open(vl)
+	video, err := os.Open(VIDEO_DIR + vid)
 	if err != nil {
 		log.Printf("Error when try to open file: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -22,6 +21,7 @@ func streamHandler(c *gin.Context) {
 		})
 		return
 	}
+	log.Print("streamHandler: ",video.Name())
 	defer video.Close()
 	//b, _ := ioutil.ReadAll(video)
 	c.Header("Content-Type", "video/mp4")
@@ -30,11 +30,11 @@ func streamHandler(c *gin.Context) {
 
 func uploadHandler(c *gin.Context) {
 	form, _ := c.MultipartForm()
-	files := form.File["video_file"]
-
+	files := form.File["file"]
+	vid := c.Param("vid-id")
 	for _, file := range files {
 		log.Println(file.Filename)
-		dst := fmt.Sprintf("./videos/%s", file.Filename)
+		dst := fmt.Sprintf(VIDEO_DIR + vid)
 		// 上传文件到指定的目录
 		c.SaveUploadedFile(file, dst)
 	}

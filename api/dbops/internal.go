@@ -16,28 +16,24 @@ func InsertSession(sid string, ttl string, uname string) error {
 	return nil
 }
 
-func RetrieveSession(sid string) (*defs.Session, error) {
-	session := defs.Session{}
-	err := dbConn.Where("id = ?", sid).First(&session).Error
-	if err != nil {
-		return nil, err
-	}
-	return &session, nil
-}
+// func RetrieveSession(name string) (*defs.Session, error) {
+// 	session := defs.Session{}
+// 	err := dbConn.Where("login_name = ?", name).First(&session).Error
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return &session, nil
+// }
 
 func RetrieveAllSessions() (*sync.Map, error) {
 	m := &sync.Map{}
-	rows, err := dbConn.Find(&defs.Session{}).Rows()
-	if err != nil {
+	sessions := []defs.Session{}
+	if err := dbConn.Find(&sessions).Error; err != nil {
+		log.Printf("retrive sessions error: %s", err)
 		return m, err
 	}
-	for rows.Next() {
-		var id, ttl, name string
-		if er := rows.Scan(&id, &ttl, &name); er != nil {
-			log.Printf("retrive sessions error: %s", er)
-			break
-		}
-		m.Store(id, &defs.Session{ID: id, TTL: ttl, LoginName: name})
+	for _, v := range sessions {
+		m.Store(v.ID, &v)
 	}
 	return m, nil
 }
